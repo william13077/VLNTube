@@ -1,8 +1,8 @@
-# VLNTube
+# 🚀 VLNTube
 
 An end-to-end pipeline for generating Vision-Language Navigation (VLN) training data from indoor 3D scenes. Starting from raw USD scene files, VLNTube produces complete trajectory datasets with RGB/depth observations, discrete action sequences, and multi-granularity natural language instructions.
 
-## Pipeline Overview
+## 🔄 Pipeline Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -55,7 +55,18 @@ An end-to-end pipeline for generating Vision-Language Navigation (VLN) training 
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-## Quick Start
+## 📦 Data Download
+
+Before running the pipeline, download the required scene data:
+
+| Dataset | Contents | Link |
+|---|---|---|
+| **TataServices** | USD scene files | [Hugging Face](https://huggingface.co/datasets/Eyz/TataServices) |
+| **TaTaMeta** | Scene metadata (collision maps, room layouts) | [Hugging Face](https://huggingface.co/datasets/Eyz/TaTaMeta) |
+
+For a demo of the environment and a guide to installing Isaac Sim, see [IAmGoodNavigator](https://github.com/william13077/IAmGoodNavigator).
+
+## ⚡ Quick Start
 
 ```bash
 # 0. Build scene graphs (requires Isaac Sim)
@@ -73,7 +84,7 @@ python instube/gemini_aug_goal_image_enhance.py
 python datatube/convert_data.py
 ```
 
-## Modules
+## 🤖 Modules
 
 | Module | Description | Isaac Sim Required |
 |---|---|---|
@@ -82,7 +93,7 @@ python datatube/convert_data.py
 | [`instube/`](instube/README.md) | Generate and augment navigation instructions via Gemini API | No |
 | [`datatube/`](datatube/README.md) | Convert to InteriorNav training format | No |
 
-## Data Flow
+## 🗺️ Data Flow
 
 ```
 USD scenes + metadata
@@ -104,7 +115,7 @@ USD scenes + metadata
                          datatube ──▶ InteriorNav dataset
 ```
 
-## Requirements
+## 📋 Requirements
 
 - **Isaac Sim** (for scene_graph, vistube stages 2-3)
 - **Gemini API key** (for instube)

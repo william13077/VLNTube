@@ -64,9 +64,9 @@ Before running the pipeline, download the required scene data:
 | **TataServices** | USD scene files | [Hugging Face](https://huggingface.co/datasets/Eyz/TataServices) |
 | **TaTaMeta** | Scene metadata (collision maps, room layouts) | [Hugging Face](https://huggingface.co/datasets/Eyz/TaTaMeta) |
 
-For a demo of the environment and a guide to installing Isaac Sim, see [IAmGoodNavigator](https://github.com/william13077/IAmGoodNavigator).
-
 ## ⚡ Quick Start
+
+🎮 **New here?** Try [IAmGoodNavigator](https://github.com/william13077/IAmGoodNavigator) first — walk through our 3D scenes yourself, get Isaac Sim set up, and see what the generated data looks like in action!
 
 ```bash
 # 0. Build scene graphs (requires Isaac Sim)

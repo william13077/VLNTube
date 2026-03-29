@@ -2,9 +2,9 @@ import wordninja
 import random
 import spacy
 import pyinflect # Step 1: The worker is hired.
-from vlntube.goal_gen.target_action import target_to_actions_final
-from vlntube.goal_gen.action_category import action_categories_final
-from vlntube.goal_gen.template import smart_templates, smart_templates_v3, smart_templates_v4
+from vistube.goal_gen.target_action import target_to_actions_final
+from vistube.goal_gen.action_category import action_categories_final
+from vistube.goal_gen.template import smart_templates, smart_templates_v3, smart_templates_v4
 
 # Preposition
 PREPOSITIONS = {'above', 'below', 'in', 'near', 'on', 'under', 'out of', 'next to', \

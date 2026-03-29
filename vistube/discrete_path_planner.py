@@ -14,7 +14,7 @@ import copy
 import matplotlib.pyplot as plt
 import cv2
 
-from vlntube.tube_utils import remove_initial_turns
+from vistube.tube_utils import remove_initial_turns
 
 # Action definitions
 ACTION_STOP = 0

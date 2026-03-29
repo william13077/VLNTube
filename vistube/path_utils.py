@@ -9,15 +9,15 @@ from pathfinding.finder.a_star import AStarFinder
 from pathfinding.core.grid import Grid
 from pathfinding.core.diagonal_movement import DiagonalMovement
 import copy
-from vlntube.path_finder import TimeLimitedBiAStarFinder
-from vlntube.path_finder import simplify_path_with_collision_check
+from vistube.path_finder import TimeLimitedBiAStarFinder
+from vistube.path_finder import simplify_path_with_collision_check
 from scipy.interpolate import splprep, splev
 from sklearn_extra.cluster import KMedoids
 from scipy.ndimage import gaussian_filter1d # Gaussian smoothing
 from pyquaternion import Quaternion
 from PIL import Image
 import cv2
-from vlntube.tube_utils import rot3_from_O_to_AB, DEFAULT_CAMERA_FORWARD
+from vistube.tube_utils import rot3_from_O_to_AB, DEFAULT_CAMERA_FORWARD
 
 O = DEFAULT_CAMERA_FORWARD
 

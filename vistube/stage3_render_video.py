@@ -36,8 +36,8 @@ from scipy.spatial.transform import Rotation as R
 import glob, natsort, random
 from tqdm import tqdm
 import signal, cv2, json, math
-from vlntube.tube_utils import remove_initial_turns
-from vlntube.tube_utils import rot3_from_O_to_AB, DEFAULT_CAMERA_FORWARD
+from vistube.tube_utils import remove_initial_turns
+from vistube.tube_utils import rot3_from_O_to_AB, DEFAULT_CAMERA_FORWARD
 
 # Global random seed - for reproducibility
 SAMPLE_SEED = 1024  # Can be changed as needed
@@ -326,9 +326,7 @@ if __name__ == "__main__":
         if tmp_id in ['kujiale_0118']:
             sys.exit(EXIT_CODE_SKIP_DONE)
         print(f'==> Processing scene: {tmp_id}')
-    # for scene_id in [tmp_id]:
-    # for scene_id in ['kujiale_0101']:
-    for scene_id in ['kujiale_0274']:
+    for scene_id in [tmp_id]:
         SAVE_DIR = os.path.join(dataroot,scene_id,task_dir,seq_dir)
         os.makedirs(SAVE_DIR,exist_ok=True)
 
@@ -381,8 +379,6 @@ if __name__ == "__main__":
         print(f"Found {len(pending_paths)} pending paths. Processing a batch of {len(paths_to_process_this_run)}.")
 
         # 1. USD file path (make sure it has been modified)
-        # USD_FILE_PATH = os.path.join(irosroot,scene_id,f'{scene_id}.usda')
-        # USD_FILE_PATH = os.path.join(usd_root,scene_id,f'{scene_id}.usda')
         USD_FILE_PATH = os.path.join(usd_root,scene_id,f'start_result_navigation.usd')
 
         if not USD_FILE_PATH.startswith("omniverse://") and not os.path.exists(USD_FILE_PATH):
@@ -391,7 +387,6 @@ if __name__ == "__main__":
             exit()
         elif USD_FILE_PATH == "PATH_TO_YOUR_USD_FILE.usd":
             carb.log_warn(f"Warning: Please change the 'USD_FILE_PATH' variable in the script to your actual USD file path.")
-            # exit() # Uncomment this line to force exit when path is not modified
 
         try:
             # Create World
@@ -410,8 +405,6 @@ if __name__ == "__main__":
             # 3. Set local scale (relative to parent Prim, usually /World)
             asset_xform.set_local_scale(np.array([scale_factor, scale_factor, scale_factor]))
 
-            # (Optional) Add ground plane
-            # world.scene.add_default_ground_plane()
 
             # --- Create and set up camera ---
             carb.log_info(f"Creating camera at path: {CAMERA_PRIM_PATH}")
@@ -422,8 +415,7 @@ if __name__ == "__main__":
             )
             # Initialize camera. This creates the camera prim and sets its properties, and adds it to the scene
             camera.initialize()
-            # camera.set_focal_length(23)
-            # camera.set_vertical_aperture(26.558) # vfov 60 degrees
+
 
             ## zerui's setting
             camera.add_distance_to_image_plane_to_frame()
@@ -442,13 +434,11 @@ if __name__ == "__main__":
 
                 # 7. Filename and path for saving images
                 path_basename = path_file.split('/')[-1].split('.')[0]
-                # OUTPUT_DIR = os.path.join(SAVE_DIR, path_basename)
                 SUCCESS_MARKER_PATH = os.path.join(SAVE_DIR, path_basename+'.success') # <--- New: Define success marker file path
                 ATTEMPTS_MARKER_PATH = os.path.join(SAVE_DIR, path_basename+'.attempts') # <--- New: Define attempts count file path
 
                 # <--- New: Checkpoint resume check
                 if os.path.exists(SUCCESS_MARKER_PATH):
-                    # print(f"Path {path_file} already processed, skipping.") # Can see in tqdm, no need to print
                     continue
 
                 # 2. Check failure count
@@ -469,7 +459,6 @@ if __name__ == "__main__":
                     # Load waypoints
                     path_xy = np.load(path_file)
                     print(f"Loaded waypoints from {path_file}, shape: {path_xy.shape}")
-                    # No longer need path_xy = path_xy[::2], because discrete version should already be processed
 
                     # Load corresponding actions
                     action_file = path_file.replace('/npy/', '/actions/').replace('.npy', '.json').replace('path','actions')

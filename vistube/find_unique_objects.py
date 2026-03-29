@@ -3,9 +3,9 @@ import random
 import numpy as np
 import os
 import natsort
-from vlntube.goal_gen.gen_goal_inst import correct_description_v2, correct_description
-from vlntube.goal_gen.target_action import target_to_actions_final
-from vlntube.tube_utils import extract_object_type_outer
+from vistube.goal_gen.gen_goal_inst import correct_description_v2, correct_description
+from vistube.goal_gen.target_action import target_to_actions_final
+from vistube.tube_utils import extract_object_type_outer
 
 
 def find_unique_objects(scene_data: dict, n: int) -> list:

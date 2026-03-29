@@ -27,12 +27,12 @@ Stage 3: Render Navigation Videos
 
 ```bash
 # Run the full pipeline (edit shared config in run_pipeline.sh first)
-bash vlntube/run_pipeline.sh
+bash vistube/run_pipeline.sh
 
 # Or run individual stages:
-python -m vlntube.stage1_sample_walkable --dataroot /path/to/scenes --metaroot /path/to/metadata
-python -m vlntube.stage2_generate_goals /path/to/scene_dir --dataroot ... --task-dir goalnav_discrete
-python -m vlntube.stage3_render_video /path/to/scene_dir --dataroot ... --task-dir goalnav_discrete
+python -m vistube.stage1_sample_walkable --dataroot /path/to/scenes --metaroot /path/to/metadata
+python -m vistube.stage2_generate_goals /path/to/scene_dir --dataroot ... --task-dir goalnav_discrete
+python -m vistube.stage3_render_video /path/to/scene_dir --dataroot ... --task-dir goalnav_discrete
 ```
 
 ## Shared CLI Arguments
@@ -45,6 +45,7 @@ All paths are configured via CLI arguments (with defaults). The shell script `ru
 | `--metaroot` | Root dir containing scene metadata (freemap.npy, room_region.json) | Stage 1, 2, 3 |
 | `--usd-root` | Root dir containing USD scene files for Isaac Sim | Stage 2, 3 |
 | `--scene-graph` | Root dir containing scene graph data (object_dict.json) | Stage 2 |
+| `--sample-dir` | Subdirectory name for sampled points (e.g. `sampled_points_publish`) | Stage 1, 2 |
 | `--task-dir` | Subdirectory name for task outputs (e.g. `goalnav_discrete`) | Stage 2, 3 |
 | `--seq-dir` | Subdirectory name for rendered video sequences | Stage 3 |
 | `scene_dir` | (positional, optional) Path to a specific scene directory | Stage 2, 3 |
@@ -52,7 +53,7 @@ All paths are configured via CLI arguments (with defaults). The shell script `ru
 ## Directory Structure
 
 ```
-vlntube/
+vistube/
 ├── run_pipeline.sh              # Shell script to run all stages with shared config
 ├── stage1_sample_walkable.py    # Stage 1: walkable point sampling
 ├── stage2_generate_goals.py     # Stage 2: goal selection + discrete path planning

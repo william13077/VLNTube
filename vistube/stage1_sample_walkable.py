@@ -8,8 +8,8 @@ matplotlib.use('Agg')  # Use non-GUI backend
 import matplotlib.pyplot as plt
 from pathfinding.core.grid import Grid
 import copy
-from vlntube.path_finder import simplify_path_with_collision_check
-from vlntube.path_utils import sample_walkable_point_in_polygon, get_path, visualize_and_save_result, densify, smooth_path_spline, smooth_path_average, smooth_path_conditional, simplify_path, find_representative_points
+from vistube.path_finder import simplify_path_with_collision_check
+from vistube.path_utils import sample_walkable_point_in_polygon, get_path, visualize_and_save_result, densify, smooth_path_spline, smooth_path_average, smooth_path_conditional, simplify_path, find_representative_points
 import datetime
 import pdb
 # --- Helper functions ---
@@ -23,6 +23,8 @@ parser.add_argument('--dataroot', type=str, default='/mnt/6t/dataset/vlnverse/',
                     help='Root directory containing scene folders')
 parser.add_argument('--metaroot', type=str, default='/data/lsh/scene_summary/metadata/',
                     help='Root directory containing scene metadata (freemap, room_region, etc.)')
+parser.add_argument('--sample-dir', type=str, default='sampled_points',
+                    help='Subdirectory name for saving sampled points (under each scene folder)')
 args = parser.parse_args()
 
 SAMPLE_NUM = 5
@@ -37,7 +39,7 @@ for scene_id in dir:
     if scene_id not in ['kujiale_0003']:
         continue
     # 2nd version: changed waypoint generation, and the freemap is different
-    vis_dir = os.path.join(dataroot,scene_id,'sampled_points_publish')
+    vis_dir = os.path.join(dataroot,scene_id,args.sample_dir)
     if os.path.exists(os.path.join(vis_dir,'sampled_points.json')):
         continue
     if not os.path.exists(vis_dir):

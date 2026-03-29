@@ -1,1 +1,1 @@
-# vlntube - VLN (Vision-Language Navigation) data generation pipeline
+# vistube - VLN (Vision-Language Navigation)  visual data generation pipeline

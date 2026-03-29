@@ -31,7 +31,7 @@ action_categories_final = {
 }
 
 if __name__ == '__main__':
-    from vlntube.goal_gen.target_action import target_to_actions_final
+    from vistube.goal_gen.target_action import target_to_actions_final
     # Check if there are overlapping actions in different categories
     t_action = []
     for actions in target_to_actions_final.values():

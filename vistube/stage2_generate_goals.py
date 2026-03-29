@@ -20,9 +20,9 @@ from PIL import Image
 import natsort
 import sys
 import math
-from vlntube.discrete_path_planner import DiscretePathPlanner, get_discrete_path, ACTION_STOP, ACTION_FORWARD, ACTION_TURN_LEFT, ACTION_TURN_RIGHT, remove_initial_turns
-from vlntube.goal_gen.gen_goal_inst import generate_instruction_smart, generate_instruction_v8, correct_description_v2
-from vlntube.tube_utils import extract_object_type_outer
+from vistube.discrete_path_planner import DiscretePathPlanner, get_discrete_path, ACTION_STOP, ACTION_FORWARD, ACTION_TURN_LEFT, ACTION_TURN_RIGHT, remove_initial_turns
+from vistube.goal_gen.gen_goal_inst import generate_instruction_smart, generate_instruction_v8, correct_description_v2
+from vistube.tube_utils import extract_object_type_outer
 import random
 
 # --- Parse CLI arguments before Isaac Sim init (SimulationApp may consume sys.argv) ---
@@ -39,6 +39,8 @@ parser.add_argument('--scene-graph', type=str, default='/data/lsh/scene_summary/
                     help='Root directory containing scene graph data (object_dict.json)')
 parser.add_argument('--task-dir', type=str, default='goalnav_discrete',
                     help='Subdirectory name for saving task outputs')
+parser.add_argument('--sample-dir', type=str, default='sampled_points',
+                    help='Subdirectory name for sampled points (output of stage1, under each scene folder)')
 args, unknown_args = parser.parse_known_args()
 # Restore sys.argv with only unknown args so SimulationApp doesn't choke on ours
 sys.argv = [sys.argv[0]] + unknown_args
@@ -66,7 +68,7 @@ from omni.isaac.core.utils.stage import add_reference_to_stage
 from omni.isaac.sensor import Camera
 from omni.isaac.core.prims import XFormPrim
 from pyquaternion import Quaternion
-from vlntube.find_unique_objects import find_bidirectionally_unique_objects_debug, find_bidirectionally_unique_objects_exact
+from vistube.find_unique_objects import find_bidirectionally_unique_objects_debug, find_bidirectionally_unique_objects_exact
 
 # ==========================================================
 #                   Path planning libraries
@@ -74,8 +76,8 @@ from vlntube.find_unique_objects import find_bidirectionally_unique_objects_debu
 from pathfinding.finder.a_star import AStarFinder
 from pathfinding.core.grid import Grid
 from pathfinding.core.diagonal_movement import DiagonalMovement
-from vlntube.path_finder import simplify_path_with_collision_check
-from vlntube.path_utils import sample_walkable_point_in_polygon, get_path, get_front_face_info, find_endpoint_in_arc, douglas_peucker, densify_path_float, capture_final_scene_photo, draw_semitransparent_fan, world_to_pixel, segment_path_by_all_intersections, proc_path_zerui, get_opposing_faces_info, calculate_proximity_risk_score, find_containing_room, capture_final_scene_photo_twostep
+from vistube.path_finder import simplify_path_with_collision_check
+from vistube.path_utils import sample_walkable_point_in_polygon, get_path, get_front_face_info, find_endpoint_in_arc, douglas_peucker, densify_path_float, capture_final_scene_photo, draw_semitransparent_fan, world_to_pixel, segment_path_by_all_intersections, proc_path_zerui, get_opposing_faces_info, calculate_proximity_risk_score, find_containing_room, capture_final_scene_photo_twostep
 
 
 # ==========================================================
@@ -156,7 +158,7 @@ MAX_ENDPOINT_DEVIATION = 1.5  # Maximum allowed deviation between path endpoint 
 MAX_GOAL_DEVIATION = 1.5 # 2.5
 
 # Update discrete_path_planner global parameters
-from vlntube import discrete_path_planner
+from vistube import discrete_path_planner
 discrete_path_planner.FORWARD_DISTANCE = FORWARD_DISTANCE
 discrete_path_planner.TURN_ANGLE = TURN_ANGLE
 discrete_path_planner.TURN_ANGLE_RAD = math.radians(TURN_ANGLE)
@@ -178,24 +180,17 @@ if __name__ == '__main__':
         print(f'==> Processing scene: {tmp_id}')
 
     # Test scene
-    for scene_id in ["kujiale_0274"]:
-    # for scene_id in [tmp_id]:
-        # if scene_id in ['kujiale_0118','kujiale_0189','kujiale_0271', 'kujiale_0274','kujiale_0092','kujiale_0203']:
-        # if scene_id not in ['kujiale_0118', 'kujiale_0092','kujiale_0203']: # rescue
-        if scene_id not in ['kujiale_0271', 'kujiale_0274']: # rescue2
-            print(f'==> Skip scene {scene_id}')
-            continue
+    for scene_id in [tmp_id]:
 
         try:
             # --- 1. Configure paths ---
             ROOT_DIR = os.path.join(dataroot, scene_id)
-            # SCENE_USD_PATH = os.path.join(usd_root, scene_id, f'{scene_id}.usda')
             SCENE_USD_PATH = os.path.join(usd_root,scene_id,f'start_result_navigation.usd')
             OBJECTS_INFO_PATH = os.path.join(scene_graph, scene_id, 'object_dict.json')
             OCCUPANCY_PATH = os.path.join(metaroot, scene_id, 'freemap.npy')
             RGB_INIT_PATH = os.path.join(dataroot, scene_id, 'occupancy.png')
             ANNOTATION_PATH = os.path.join(metaroot, scene_id, 'room_region.json')
-            annotation_path = os.path.join(dataroot, scene_id, 'sampled_points_gaus', 'sampled_points.json')
+            annotation_path = os.path.join(dataroot, scene_id, args.sample_dir, 'sampled_points.json')
 
             # Create save directories (with _discrete suffix to distinguish)
             save_dir = os.path.join(ROOT_DIR, task_dir)
@@ -219,8 +214,7 @@ if __name__ == '__main__':
 
             camera = Camera(prim_path="/World/CombinedCamera", resolution=(IMAGE_WIDTH, IMAGE_HEIGHT))
             camera.initialize()
-            # camera.set_focal_length(23)
-            # camera.set_vertical_aperture(26.558) # vfov 60 degrees
+
             ## zerui's setting
             camera.add_distance_to_image_plane_to_frame()
             camera.set_clipping_range(near_distance=0.01, far_distance=10000.0)
@@ -272,19 +266,6 @@ if __name__ == '__main__':
             occ_map[0,1:]
             door_coor = [d for d in door_coor if np.linalg.norm(np.array(d[0]) - np.array(d[1])) < 50]
 
-            # Get target objects
-            # Use exact-match blacklist (note: these are full object type names, not partial strings)
-            # s_blacklist = ['ceiling', 'doorsil', 'ornament', 'daily_equipment', 'tooling',
-            #               'unknown', 'decorat','decoration', 'menorah', 'stora', 'table_la',
-            #               'cabin', 'chandelier', 'floor']
-            # t_blacklist = s_blacklist
-
-            # # Use the new exact-match function to avoid false positives on similar names like table_lamp
-            # obj_description, obj_dict = find_bidirectionally_unique_objects_exact(
-            #     objects_data, n=100000, debug=False,
-            #     source_blacklist=s_blacklist, target_blacklist=t_blacklist
-            # )
-
             source_blacklist=['ceiling','doorsil','ornament','daily_equipment','tooling','unknown','menorah','celling','chandelier']
             obj_description,obj_dict = find_bidirectionally_unique_objects_debug(
                 objects_data, n=100000000, debug = False,
@@ -300,9 +281,6 @@ if __name__ == '__main__':
                 print('\n', '+' * 60)
                 print(f'==> Processing {goal_count} goal with DISCRETE path planning')
 
-                # camera.set_focal_length(23)
-                # camera.set_vertical_aperture(26.558)
-                # world.reset()
 
                 # Parse goal
                 TARGET_OBJECT_INSTANCE_ID = goal['object_1_id']
@@ -521,12 +499,7 @@ if __name__ == '__main__':
                                 color, alpha
                             )
 
-                        # Draw discretized path
-                        # for i in range(len(path_pixels) - 1):
-                        #     cv2.line(rgb_display,
-                        #            tuple(path_pixels[i]),
-                        #            tuple(path_pixels[i+1]),
-                        #            (0.0, 1.0, 0.5), 2)
+
                         rgb_display[path_pixels[:, 1], path_pixels[:, 0]] = [0, 1, 0.5]
 
                         # Mark start and end points

@@ -30,6 +30,14 @@ Step 3: Fusion & Augmentation
 | `gemini_images_analyzer.py` | Step 1: Generates navigation instructions from rendered image sequences |
 | `gemini_aug_goal_image_enhance.py` | Steps 2-3: Generates targeted captions from goal images, then fuses with text instructions to produce augmented instructions in three styles |
 
+## Dependencies
+
+### Third-party packages
+
+```bash
+pip install google-generativeai Pillow tqdm natsort
+```
+
 ## Prerequisites
 
 - **Gemini API key**: Set via `export GOOGLE_API_KEY='your_key'`

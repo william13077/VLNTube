@@ -11,6 +11,7 @@ USD_ROOT="/mnt/6t/dataset/vlnverse"
 SCENE_GRAPH="/data/lsh/scene_summary/scene_summary/"
 TASK_DIR="goalnav_discrete"
 SEQ_DIR="sequence_discrete"
+SPLITS_FILE="splits/scene_splits.json"
 
 EXIT_CODE_ALL_DONE=10
 EXIT_CODE_SKIP_SCENE=11
@@ -26,7 +27,8 @@ echo "========== STAGE 1: Sample Walkable Points =========="
 python -m vistube.stage1_sample_walkable \
     --dataroot "$DATAROOT" \
     --metaroot "$METAROOT" \
-    --sample-dir "$SAMPLE_DIR"
+    --sample-dir "$SAMPLE_DIR" \
+    --splits-file "$SPLITS_FILE"
 echo "Stage 1 complete."
 echo "========================================================"
 
@@ -43,7 +45,8 @@ for SUB_DIR in "${selected_dirs[@]}"; do
             --usd-root "$USD_ROOT" \
             --scene-graph "$SCENE_GRAPH" \
             --task-dir "$TASK_DIR" \
-            --sample-dir "$SAMPLE_DIR"
+            --sample-dir "$SAMPLE_DIR" \
+            --splits-file "$SPLITS_FILE"
         echo "----------------------------------------"
     fi
 done
@@ -62,7 +65,8 @@ for SUB_DIR in "${selected_dirs[@]}"; do
             --metaroot "$METAROOT" \
             --usd-root "$USD_ROOT" \
             --task-dir "$TASK_DIR" \
-            --seq-dir "$SEQ_DIR"
+            --seq-dir "$SEQ_DIR" \
+            --splits-file "$SPLITS_FILE"
         echo "----------------------------------------"
     fi
 done

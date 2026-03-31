@@ -6,6 +6,7 @@ import json
 from PIL import Image
 from tqdm import tqdm
 from instube.prompt import VLN_PROMPT_IMAGE_SEQUENCE
+from splits.split_utils import is_trainval
 
 # --- Max frames to send per API call ---
 MAX_FRAMES_TO_SEND = 30
@@ -66,6 +67,7 @@ def analyze_image_sequence_with_prompt(image_paths: list, user_prompt: str):
 # --- Main entry point ---
 if __name__ == "__main__":
     dataroot = '/mnt/6t/dataset/vlnverse'
+    splits_file = 'splits/scene_splits.json'
     dir = natsort.natsorted([i for i in os.listdir(dataroot) if os.path.isdir(os.path.join(dataroot, i))])
 
 
@@ -75,6 +77,8 @@ if __name__ == "__main__":
     json_name = 'inst_img_sequence.json'
 
     for scene_id in dir:
+        if not is_trainval(splits_file, scene_id):
+            continue
 
         save_dir = os.path.join(dataroot, scene_id, task_dir, inst_dir)
         output_file = os.path.join(save_dir, json_name)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert VLN trajectory data from cvpr_kl format into InteriorNav format.
+Convert VLN trajectory data  into InteriorNav format.
 """
 
 import json
@@ -14,6 +14,7 @@ from pathlib import Path
 from tqdm import tqdm
 import datetime
 from natsort import natsorted
+from splits.split_utils import is_trainval
 
 
 class DataConverter:
@@ -418,6 +419,7 @@ def main():
     target_root = "/data/dataset/vlnverse/traj_data/vlnverse"
     task_dir = "goalnav_discrete"
     seq_dir = "sequence_discrete"
+    splits_file = "splits/scene_splits.json"
 
     converter = DataConverter(source_root, target_root, task_dir, seq_dir)
 
@@ -438,6 +440,8 @@ def main():
     all_coarse_grained_episodes = []
 
     for scene in scenes:
+        if not is_trainval(splits_file, scene):
+            continue
         fine_eps, coarse_eps = converter.convert_scene(scene)
         all_fine_grained_episodes.extend(fine_eps)
         all_coarse_grained_episodes.extend(coarse_eps)

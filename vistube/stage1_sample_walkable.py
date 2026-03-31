@@ -10,6 +10,7 @@ from pathfinding.core.grid import Grid
 import copy
 from vistube.path_finder import simplify_path_with_collision_check
 from vistube.path_utils import sample_walkable_point_in_polygon, get_path, visualize_and_save_result, densify, smooth_path_spline, smooth_path_average, smooth_path_conditional, simplify_path, find_representative_points
+from splits.split_utils import is_trainval
 import datetime
 import pdb
 # --- Helper functions ---
@@ -25,6 +26,8 @@ parser.add_argument('--metaroot', type=str, default='/data/lsh/scene_summary/met
                     help='Root directory containing scene metadata (freemap, room_region, etc.)')
 parser.add_argument('--sample-dir', type=str, default='sampled_points',
                     help='Subdirectory name for saving sampled points (under each scene folder)')
+parser.add_argument('--splits-file', type=str, default='splits/scene_splits.json',
+                    help='Path to the scene splits JSON file')
 args = parser.parse_args()
 
 SAMPLE_NUM = 5
@@ -36,7 +39,7 @@ dir = natsort.natsorted([i for i in temp_dir if os.path.isdir(os.path.join(datar
 
 
 for scene_id in dir:
-    if scene_id not in ['kujiale_0003']:
+    if not is_trainval(args.splits_file, scene_id):
         continue
     # 2nd version: changed waypoint generation, and the freemap is different
     vis_dir = os.path.join(dataroot,scene_id,args.sample_dir)

@@ -7,6 +7,7 @@ import natsort
 from PIL import Image, ImageStat
 import re
 from instube.prompt import CAPTION_GENERATION_PROMPT,REWRITE_PROMPT_FUSION
+from splits.split_utils import is_trainval
 
 
 
@@ -328,7 +329,8 @@ def main(input_file, output_file):
 # --- Script entry point ---
 if __name__ == "__main__":
     # --- Configure paths ---
-    dataroot = '/mnt/6t/dataset/cvpr_kl'
+    dataroot = '/mnt/6t/dataset/vlnverse'
+    splits_file = 'splits/scene_splits.json'
 
     taskdir = 'goalnav_discrete'
 
@@ -344,6 +346,8 @@ if __name__ == "__main__":
     print(f"Searching for scenes under: {dataroot}")
     processed_count = 0
     for scene_id in tqdm(dirs, desc="Processing Scenes"):
+        if not is_trainval(splits_file, scene_id):
+            continue
         input_file = os.path.join(dataroot, scene_id, taskdir, 'goal_inst.json')
         output_file = os.path.join(dataroot, scene_id, taskdir, 'goal_inst_aug_enhance.json')
 

@@ -23,6 +23,7 @@ import math
 from vistube.discrete_path_planner import DiscretePathPlanner, get_discrete_path, ACTION_STOP, ACTION_FORWARD, ACTION_TURN_LEFT, ACTION_TURN_RIGHT, remove_initial_turns
 from vistube.goal_gen.gen_goal_inst import generate_instruction_smart, generate_instruction_v8, correct_description_v2
 from vistube.tube_utils import extract_object_type_outer
+from splits.split_utils import is_trainval
 import random
 
 # --- Parse CLI arguments before Isaac Sim init (SimulationApp may consume sys.argv) ---
@@ -41,6 +42,8 @@ parser.add_argument('--task-dir', type=str, default='goalnav_discrete',
                     help='Subdirectory name for saving task outputs')
 parser.add_argument('--sample-dir', type=str, default='sampled_points',
                     help='Subdirectory name for sampled points (output of stage1, under each scene folder)')
+parser.add_argument('--splits-file', type=str, default='splits/scene_splits.json',
+                    help='Path to the scene splits JSON file')
 args, unknown_args = parser.parse_known_args()
 # Restore sys.argv with only unknown args so SimulationApp doesn't choke on ours
 sys.argv = [sys.argv[0]] + unknown_args
@@ -175,7 +178,7 @@ if __name__ == '__main__':
         tmp_id = dir_path_from_shell.rstrip('/').split('/')[-1]
 
     if tmp_id is not None:
-        if tmp_id == 'demo_0000':
+        if not is_trainval(args.splits_file, tmp_id):
             sys.exit()
         print(f'==> Processing scene: {tmp_id}')
 

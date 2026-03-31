@@ -15,6 +15,8 @@ parser.add_argument('--task-dir', type=str, default='goalnav_discrete',
                     help='Subdirectory name for task outputs (input paths)')
 parser.add_argument('--seq-dir', type=str, default='sequence_discrete',
                     help='Subdirectory name for rendered video sequences')
+parser.add_argument('--splits-file', type=str, default='splits/scene_splits.json',
+                    help='Path to the scene splits JSON file')
 args, unknown_args = parser.parse_known_args()
 sys.argv = [sys.argv[0]] + unknown_args
 
@@ -38,6 +40,7 @@ from tqdm import tqdm
 import signal, cv2, json, math
 from vistube.tube_utils import remove_initial_turns
 from vistube.tube_utils import rot3_from_O_to_AB, DEFAULT_CAMERA_FORWARD
+from splits.split_utils import is_trainval
 
 # Global random seed - for reproducibility
 SAMPLE_SEED = 1024  # Can be changed as needed
@@ -322,8 +325,7 @@ if __name__ == "__main__":
         dir_path_from_shell = args.scene_dir
         tmp_id = dir_path_from_shell.rstrip('/').split('/')[-1]
     if tmp_id is not None:
-        # if tmp_id in ['kujiale_0118','kujiale_0189','kujiale_0271', 'kujiale_0274','kujiale_0092','kujiale_0203']:
-        if tmp_id in ['kujiale_0118']:
+        if not is_trainval(args.splits_file, tmp_id):
             sys.exit(EXIT_CODE_SKIP_DONE)
         print(f'==> Processing scene: {tmp_id}')
     for scene_id in [tmp_id]:

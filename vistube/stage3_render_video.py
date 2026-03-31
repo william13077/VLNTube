@@ -283,12 +283,11 @@ def intelligent_sample_paths(npy_files, max_samples=50):
 
 # --- Configuration ---
 MAX_ATTEMPTS = 5
-BATCH_SIZE = 200 #50
-# BATCH_SIZE = 25
+BATCH_SIZE = 25 # some scene memory leak, it will restart each batch
 EXIT_CODE_ALL_DONE = 10
 EXIT_CODE_SKIP_DONE = 11
 HEIGHT = 1.2
-MAX_EPISODE = 200 #50 # Maximum number of samples
+MAX_EPISODE = 50 # 200 Maximum number of samples, up to you
 # --- Configuration (from CLI args) ---
 dataroot = args.dataroot
 usd_root = args.usd_root
@@ -308,11 +307,7 @@ CAMERA_PRIM_PATH = "/World/MyCamera"
 
 
 # 6. Camera resolution (width, height)
-# IMAGE_WIDTH, IMAGE_HEIGHT = 400, 300
-IMAGE_WIDTH, IMAGE_HEIGHT = 224, 224 # for released
-# IMAGE_WIDTH, IMAGE_HEIGHT = 640, 640 # web demo
-# IMAGE_WIDTH, IMAGE_HEIGHT = 640, 480
-# IMAGE_WIDTH, IMAGE_HEIGHT = 480, 360
+IMAGE_WIDTH, IMAGE_HEIGHT = 224, 224 # depends on your camera settings
 
 
 # --- Main program ---

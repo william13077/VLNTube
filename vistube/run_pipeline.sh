@@ -59,15 +59,37 @@ echo "========================================================"
 echo "========== STAGE 3: Render Videos =========="
 for SUB_DIR in "${selected_dirs[@]}"; do
     if [ -d "$SUB_DIR" ]; then
-        echo "Shell: Stage 3 processing -> $SUB_DIR"
-        python -m vistube.stage3_render_video "$SUB_DIR" \
-            --dataroot "$DATAROOT" \
-            --metaroot "$METAROOT" \
-            --usd-root "$USD_ROOT" \
-            --task-dir "$TASK_DIR" \
-            --seq-dir "$SEQ_DIR" \
-            --splits-file "$SPLITS_FILE"
-        echo "----------------------------------------"
+        echo "========================================================"
+        echo "STARTING PROCESSING FOR SCENE: $SUB_DIR"
+        echo "========================================================"
+
+        while true; do
+            echo "Shell: Stage 3 processing batch -> $SUB_DIR"
+            python -m vistube.stage3_render_video "$SUB_DIR" \
+                --dataroot "$DATAROOT" \
+                --metaroot "$METAROOT" \
+                --usd-root "$USD_ROOT" \
+                --task-dir "$TASK_DIR" \
+                --seq-dir "$SEQ_DIR" \
+                --splits-file "$SPLITS_FILE"
+
+            exit_code=$?
+
+            if [ $exit_code -eq $EXIT_CODE_ALL_DONE ]; then
+                echo "Shell: All paths done for $SUB_DIR. Moving to next scene."
+                break
+            elif [ $exit_code -eq $EXIT_CODE_SKIP_SCENE ]; then
+                echo "Shell: Scene $SUB_DIR should be skipped. Moving to next scene."
+                sleep 5
+                break
+            elif [ $exit_code -ne 0 ]; then
+                echo "Shell: Unexpected error code $exit_code. Waiting before retry..."
+                sleep 7
+            else
+                echo "Shell: Batch for $SUB_DIR finished. Restarting for next batch."
+                sleep 5
+            fi
+        done
     fi
 done
 echo "Stage 3 complete."

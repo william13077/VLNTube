@@ -65,6 +65,10 @@ Before running the pipeline, download the required scene data:
 | **Room Meta** | Scene metadata (collision maps, room layouts) | [Hugging Face](https://huggingface.co/datasets/Eyz/TaTaMeta) |
 | **Pre-built Data** | Training & Testing data | [Hugging Face](https://huggingface.co/datasets/Eyz/CaffeEclipse) |
 
+## 🔀 Scene Splits
+
+The pipeline processes only the **176 trainval scenes** by default. Val_unseen (33) and test (53) scenes are automatically skipped. This is controlled by `splits/scene_splits.json`, which is read by every module.
+
 ## ⚡ Quick Start
 
 🎮 **New here?** Try [IAmGoodNavigator](https://github.com/william13077/IAmGoodNavigator) first — walk through our 3D scenes yourself, get Isaac Sim set up, and see what the generated data looks like in action!

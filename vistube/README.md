@@ -48,6 +48,7 @@ All paths are configured via CLI arguments (with defaults). The shell script `ru
 | `--sample-dir` | Subdirectory name for sampled points (e.g. `sampled_points_publish`) | Stage 1, 2 |
 | `--task-dir` | Subdirectory name for task outputs (e.g. `goalnav_discrete`) | Stage 2, 3 |
 | `--seq-dir` | Subdirectory name for rendered video sequences | Stage 3 |
+| `--splits-file` | Path to scene splits JSON (filters to trainval scenes only) | Stage 1, 2, 3 |
 | `scene_dir` | (positional, optional) Path to a specific scene directory | Stage 2, 3 |
 
 ## Directory Structure

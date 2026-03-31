@@ -24,6 +24,7 @@ Edit the config variables at the top of `main()` to match your setup:
 | `target_root` | `/data/dataset/vlnverse/traj_data/vlnverse` | Output directory for InteriorNav-format data |
 | `task_dir` | `goalnav_discrete` | Subdirectory name for task outputs under each scene |
 | `seq_dir` | `sequence_discrete` | Subdirectory name for rendered sequences under task_dir |
+| `splits_file` | `splits/scene_splits.json` | Path to scene splits JSON (filters to trainval scenes only) |
 
 ## Input Structure
 

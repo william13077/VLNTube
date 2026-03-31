@@ -75,3 +75,4 @@ Steps 2-3 produce per-scene:
 - **Resumable**: Both scripts support checkpoint/resume — they skip already-processed entries on restart.
 - **Frame sampling**: `gemini_images_analyzer.py` uniformly samples up to 30 frames when a sequence has more images.
 - **Image quality check**: `gemini_aug_goal_image_enhance.py` skips problematic images (black/white/blurry) via stddev/mean thresholds before captioning.
+- **Scene filtering**: Both scripts filter scenes to the trainval split via `splits/scene_splits.json`, skipping val_unseen and test scenes.

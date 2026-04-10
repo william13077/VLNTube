@@ -63,6 +63,7 @@ Before running the pipeline, download the required scene data:
 |---|---|---|
 | **Envs** | USD scene files | [Hugging Face](https://huggingface.co/datasets/Eyz/TataServices) |
 | **Room Meta** | Scene metadata (collision maps, room layouts) | [Hugging Face](https://huggingface.co/datasets/Eyz/TaTaMeta) |
+| **Scene Graph** | Object relationship | [Hugging Face](https://huggingface.co/datasets/Eyz/SceneSummary) |
 | **Pre-built Data** | Training & Testing data | [Hugging Face](https://huggingface.co/datasets/Eyz/CaffeEclipse) |
 
 ## 🔀 Scene Splits
